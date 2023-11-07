@@ -13,6 +13,9 @@
 > ```mkvirtualenv``` -> para criar e já abrir o ambiente
 > ```workon``` -> para ver os ambientes e tbm para entrar só colocar o nome na frente
 > ```rmvirtualenv``` -> para deletar ambientes
+> ```pip freeze > requirements.txt``` -> criando um requirements.txt com todas as dependências 
+> ``` uvicorn main:app --reload ``` -> para rodar o app fastAPI no modo reload
+> ``` gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker ``` -> comando para rodar o gunicorn, usado para deploy junto com uvicorn pois é mais parrudo.
 
 ## Dados do pgadmin
 - pgadmin senha : pgdata741
