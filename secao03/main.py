@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+## Para tratar excecão
+from fastapi import HTTPException
+from fastapi import status
 
 app = FastAPI()
 
@@ -22,12 +25,11 @@ async def get_cursos():
 
 @app.get('/cursos/{curso_id}')
 async def get_curso(curso_id: int):
-    auxCurso = cursos[curso_id]
-    auxCurso.update({
-        "id": curso_id
-    })
-     
-    return auxCurso
+    try:
+        auxCurso = cursos[curso_id]
+        return auxCurso
+    except KeyError: ## KeyError é quando uma chave não é encontrada
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Curso não encontrado.')
 
 if __name__ == '__main__':
     import uvicorn
