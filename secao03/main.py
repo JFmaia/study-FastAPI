@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+##Dicionario de cursos
 cursos = {
     1: {
         "titulo": "Programação para Leigos",
@@ -14,6 +15,19 @@ cursos = {
         "horas": 45
     }
 }
+
+@app.get('/cursos')
+async def get_cursos():
+    return cursos
+
+@app.get('/cursos/{curso_id}')
+async def get_curso(curso_id: int):
+    auxCurso = cursos[curso_id]
+    auxCurso.update({
+        "id": curso_id
+    })
+     
+    return auxCurso
 
 if __name__ == '__main__':
     import uvicorn
