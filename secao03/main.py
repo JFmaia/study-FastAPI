@@ -53,7 +53,15 @@ async def put_curso(curso_id: int, curso: Curso):
         del curso.id
         return curso
     else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Não existe um curso como id {curso_id}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Não existe um curso com id {curso_id}")
+
+@app.delete('/cursos/{curso_id}')
+async def delete_curso(curso_id: int):
+    if curso_id in cursos:
+        del cursos[curso_id]
+        raise HTTPException(status_code=status.HTTP_200_OK, detail="Curso deletado com sucesso!")
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Não existe um curso com id {curso_id}")
 
 ## usado para executar a api com ```python main.py ```
 if __name__ == '__main__':
