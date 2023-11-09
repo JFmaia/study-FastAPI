@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 ## Para tratar excecão
 from fastapi import HTTPException
+## Para ter todos os tipos de status
 from fastapi import status
 
 app = FastAPI()
