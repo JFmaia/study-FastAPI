@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 ## Para respostas em json
-from fastapi.responses import JSONResponse
+from fastapi import Response
 ## Para tratar excecão
 from fastapi import HTTPException
 ## Para ter todos os tipos de status
@@ -60,7 +60,7 @@ async def put_curso(curso_id: int, curso: Curso):
 async def delete_curso(curso_id: int):
     if curso_id in cursos:
         del cursos[curso_id]
-        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Não existe um curso com id {curso_id}")
 
