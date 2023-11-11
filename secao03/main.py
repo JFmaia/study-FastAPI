@@ -1,11 +1,4 @@
-from fastapi import FastAPI
-## Para respostas em json
-from fastapi import Response
-## Para tratar excecão
-from fastapi import HTTPException
-## Para ter todos os tipos de status
-from fastapi import status
-
+from fastapi import FastAPI, Response, HTTPException, status, Path
 from models import Curso
 
 app = FastAPI()
@@ -29,7 +22,7 @@ async def get_cursos():
     return cursos
 
 @app.get('/cursos/{curso_id}')
-async def get_curso(curso_id: int):
+async def get_curso(curso_id: int = Path(title='ID do curso', description='Deve ser entre 1 e 2', gt=0, lt=3)): ##Usando path para filtrar e informar
     try:
         auxCurso = cursos[curso_id]
         return auxCurso
