@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Response, HTTPException, status, Path, Query
-from models import Curso
+from fastapi import FastAPI, Response, HTTPException, status, Path, Query, Header
+from models import Curso, Aluno
 from typing import Optional
 
 app = FastAPI()
@@ -15,6 +15,40 @@ cursos = {
         "titulo": "Algoritmos e Lógica de Programação",
         "aulas": 115,
         "horas": 45
+    }
+}
+
+##Dicionario de alunos
+alunos = {
+    1: {
+        "nome": "Gustavo Calvalcante da Silva",
+        "idade": 22,
+        "nota": 5
+    },
+    2: {
+        "titulo": "José Flávio da Silva Maia",
+        "aulas": 18,
+        "nota": 3
+    },
+    3: {
+        "titulo": "Cristal Maia Bezerra",
+        "aulas": 18,
+        "nota": 4
+    },
+    4: {
+        "titulo": "Jusoe Flávio da Silva Maia",
+        "aulas": 18,
+        "nota": 5
+    },
+    5: {
+        "titulo": "Mateus Flávio da Silva Maia",
+        "aulas": 18,
+        "nota": 4
+    },
+    6: {
+        "titulo": "Douglas Batista da Silva",
+        "aulas": 18,
+        "nota": 4
     }
 }
 
@@ -68,6 +102,41 @@ async def calcular(a: int = Query(gt=5), b: int = Query(gt=10) ,c: Optional[int]
         soma = soma + c
     return {"resusltado": soma}
 
+
+## Treinando Header parametros
+@app.get('/alunos')
+async def get_alunos():
+    return alunos
+    
+@app.post('/alunos', status_code=status.HTTP_201_CREATED)
+async def post_alunos(aluno: Aluno,): 
+    i: int = len(alunos) + 1
+    alunos[i] = aluno
+    del aluno.id
+    return aluno
+
+@app.get('/alunos/{aluno_id}')
+async def get_aluno(aluno_id: int):
+    if aluno_id in alunos:
+        return alunos[aluno_id]
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Não existe um aluno com id {aluno_id}")
+
+## Usando Query parametros e header
+@app.get('/LenAlunos')
+async def getLen_alunos(nota: int = Query(lt=5), x_geek: str = Header(default=None)):
+    listAlunos = []
+    for i, aluno in alunos.items():
+        ## Forma de comparar itens de um dicionario no python
+        if "nota" in aluno and aluno["nota"] == nota:
+            listAlunos.append(aluno)
+
+    if len(listAlunos) == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Nenhum aluno deu nota {nota}!")
+    else:
+        print(x_geek)
+        return listAlunos
+   
 ## usado para executar a api com ```python main.py ```
 if __name__ == '__main__':
     import uvicorn
