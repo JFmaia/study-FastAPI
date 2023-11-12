@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Response, HTTPException, status, Path
+from fastapi import FastAPI, Response, HTTPException, status, Path, Query
 from models import Curso
+from typing import Optional
 
 app = FastAPI()
 
@@ -56,6 +57,16 @@ async def delete_curso(curso_id: int):
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Não existe um curso com id {curso_id}")
+
+
+## Utilizando Query Parametrys para testar e aprender
+## Da para usar query tbm para limitar entradas de dados ou filtros
+@app.get('/calculadora')
+async def calcular(a: int = Query(gt=5), b: int = Query(gt=10) ,c: Optional[int] = None):
+    soma: int = a + b
+    if c:
+        soma = soma + c
+    return {"resusltado": soma}
 
 ## usado para executar a api com ```python main.py ```
 if __name__ == '__main__':
