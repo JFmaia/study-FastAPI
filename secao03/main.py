@@ -1,6 +1,16 @@
-from fastapi import FastAPI, Response, HTTPException, status, Path, Query, Header
+from fastapi import FastAPI, Response, HTTPException, status, Path, Query, Header, Depends
 from models import Curso, Aluno
-from typing import Optional
+from typing import Optional, Any
+from time import sleep
+
+## Simulação de um banco de dados
+def fake_db():
+    try:
+        print("Abrindo conexão com banco de dados...")
+        sleep(1)
+    finally:
+        print("Fechando conexão com banco de dados...")
+        sleep(1)
 
 app = FastAPI()
 
@@ -53,11 +63,11 @@ alunos = {
 }
 
 @app.get('/cursos')
-async def get_cursos():
+async def get_cursos(db: Any = Depends(fake_db)):
     return cursos
 
 @app.get('/cursos/{curso_id}')
-async def get_curso(curso_id: int = Path(title='ID do curso', description='Deve ser entre 1 e 2', gt=0, lt=3)): ##Usando path para filtrar e informar
+async def get_curso(curso_id: int = Path(title='ID do curso', description='Deve ser entre 1 e 2', gt=0, lt=3), db: Any = Depends(fake_db)): ##Usando path para filtrar e informar
     try:
         auxCurso = cursos[curso_id]
         return auxCurso
@@ -68,7 +78,7 @@ async def get_curso(curso_id: int = Path(title='ID do curso', description='Deve 
 ## Mudando status da resposta de sucesso para 201
 @app.post('/cursos', status_code=status.HTTP_201_CREATED)
 ## Deixando o post ser optional mandar o curso
-async def post_curso(curso: Curso):
+async def post_curso(curso: Curso, db: Any = Depends(fake_db)):
     next_id: int = len(cursos) + 1
     cursos[next_id] = curso
     del curso.id
@@ -76,7 +86,7 @@ async def post_curso(curso: Curso):
 
 
 @app.put('/cursos/{curso_id}')
-async def put_curso(curso_id: int, curso: Curso):
+async def put_curso(curso_id: int, curso: Curso,db: Any = Depends(fake_db)):
     if curso_id in cursos:
         cursos[curso_id] = curso
         del curso.id
@@ -85,7 +95,7 @@ async def put_curso(curso_id: int, curso: Curso):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Não existe um curso com id {curso_id}")
 
 @app.delete('/cursos/{curso_id}')
-async def delete_curso(curso_id: int):
+async def delete_curso(curso_id: int,db: Any = Depends(fake_db)):
     if curso_id in cursos:
         del cursos[curso_id]
         return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -105,18 +115,18 @@ async def calcular(a: int = Query(gt=5), b: int = Query(gt=10) ,c: Optional[int]
 
 ## Treinando Header parametros
 @app.get('/alunos')
-async def get_alunos():
+async def get_alunos(db: Any = Depends(fake_db)):
     return alunos
     
 @app.post('/alunos', status_code=status.HTTP_201_CREATED)
-async def post_alunos(aluno: Aluno,): 
+async def post_alunos(aluno: Aluno, db: Any = Depends(fake_db)): 
     i: int = len(alunos) + 1
     alunos[i] = aluno
     del aluno.id
     return aluno
 
 @app.get('/alunos/{aluno_id}')
-async def get_aluno(aluno_id: int):
+async def get_aluno(aluno_id: int,db: Any = Depends(fake_db)):
     if aluno_id in alunos:
         return alunos[aluno_id]
     else:
@@ -124,7 +134,7 @@ async def get_aluno(aluno_id: int):
 
 ## Usando Query parametros e header
 @app.get('/LenAlunos')
-async def getLen_alunos(nota: int = Query(lt=5), x_geek: str = Header(default=None)):
+async def getLen_alunos(nota: int = Query(lt=5), x_geek: str = Header(default=None),db: Any = Depends(fake_db)):
     listAlunos = []
     for i, aluno in alunos.items():
         ## Forma de comparar itens de um dicionario no python
