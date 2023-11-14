@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, HTTPException, status, Path, Query, Header, Depends
-from models import Curso, Aluno
-from typing import Optional, Any
+from models import Curso, cursos, Aluno, alunos
+from typing import Optional, Any,List
 from time import sleep
 
 ## Simulação de um banco de dados
@@ -12,57 +12,16 @@ def fake_db():
         print("Fechando conexão com banco de dados...")
         sleep(1)
 
-app = FastAPI()
+## Documentação base da API
+app = FastAPI(title='API do Curso da Geek University sobre FastAPI', version='0.0.1', description="Uma API para o estudo do FastAPI")
 
-##Dicionario de cursos
-cursos = {
-    1: {
-        "titulo": "Programação para Leigos",
-        "aulas": 122,
-        "horas": 58
-    },
-    2: {
-        "titulo": "Algoritmos e Lógica de Programação",
-        "aulas": 115,
-        "horas": 45
-    }
-}
-
-##Dicionario de alunos
-alunos = {
-    1: {
-        "nome": "Gustavo Calvalcante da Silva",
-        "idade": 22,
-        "nota": 5
-    },
-    2: {
-        "titulo": "José Flávio da Silva Maia",
-        "aulas": 18,
-        "nota": 3
-    },
-    3: {
-        "titulo": "Cristal Maia Bezerra",
-        "aulas": 18,
-        "nota": 4
-    },
-    4: {
-        "titulo": "Jusoe Flávio da Silva Maia",
-        "aulas": 18,
-        "nota": 5
-    },
-    5: {
-        "titulo": "Mateus Flávio da Silva Maia",
-        "aulas": 18,
-        "nota": 4
-    },
-    6: {
-        "titulo": "Douglas Batista da Silva",
-        "aulas": 18,
-        "nota": 4
-    }
-}
-
-@app.get('/cursos')
+## Adicionando tags para melhorar a documentação dos end points
+@app.get('/cursos', 
+    description='Retorna todos os cursos ou uma lista vazia.', 
+    summary='Retorna todos os cursos', 
+    response_model=List[Curso],
+    response_description='Cursos encontrados com Sucesso!!'
+)
 async def get_cursos(db: Any = Depends(fake_db)):
     return cursos
 
@@ -76,12 +35,11 @@ async def get_curso(curso_id: int = Path(title='ID do curso', description='Deve 
     
 
 ## Mudando status da resposta de sucesso para 201
-@app.post('/cursos', status_code=status.HTTP_201_CREATED)
+@app.post('/cursos', status_code=status.HTTP_201_CREATED, response_model=Curso)
 ## Deixando o post ser optional mandar o curso
 async def post_curso(curso: Curso, db: Any = Depends(fake_db)):
     next_id: int = len(cursos) + 1
     cursos[next_id] = curso
-    del curso.id
     return curso
 
 
@@ -122,7 +80,6 @@ async def get_alunos(db: Any = Depends(fake_db)):
 async def post_alunos(aluno: Aluno, db: Any = Depends(fake_db)): 
     i: int = len(alunos) + 1
     alunos[i] = aluno
-    del aluno.id
     return aluno
 
 @app.get('/alunos/{aluno_id}')

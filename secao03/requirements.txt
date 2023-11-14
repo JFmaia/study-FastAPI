@@ -7,7 +7,10 @@ fastapi==0.104.1
 gunicorn==21.2.0
 h11==0.14.0
 idna==3.4
+mypy-extensions==1.0.0
 packaging==23.2
+pathspec==0.11.2
+platformdirs==4.0.0
 pycodestyle==2.11.1
 pydantic==2.4.2
 pydantic_core==2.10.1
