@@ -39,7 +39,8 @@ async def get_curso(curso_id: int = Path(title='ID do curso', description='Deve 
 ## Deixando o post ser optional mandar o curso
 async def post_curso(curso: Curso, db: Any = Depends(fake_db)):
     next_id: int = len(cursos) + 1
-    cursos[next_id] = curso
+    curso.id = next_id
+    cursos.append(curso)
     return curso
 
 
@@ -79,7 +80,8 @@ async def get_alunos(db: Any = Depends(fake_db)):
 @app.post('/alunos', status_code=status.HTTP_201_CREATED)
 async def post_alunos(aluno: Aluno, db: Any = Depends(fake_db)): 
     i: int = len(alunos) + 1
-    alunos[i] = aluno
+    aluno.id = i
+    alunos.append(aluno)
     return aluno
 
 @app.get('/alunos/{aluno_id}')
