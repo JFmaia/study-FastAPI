@@ -1,6 +1,6 @@
 from typing import Optional
-
-from pydantic import BaseModel
+## Adicionando o validator
+from pydantic import BaseModel, validator
 
 class Curso(BaseModel):
     ## Mostrando que o campo é opicional
@@ -9,6 +9,19 @@ class Curso(BaseModel):
     aulas: int
     horas: int
 
+    ## validando o campo titulo com as regras que definimos
+    @validator('titulo')
+    def validar_titulo(cls, value):
+        palavras = value.split(' ')
+        ## Validação 1
+        if len(palavras) < 3:
+            raise ValueError('O título deve ter pelo menos 3 palavras!')
+        ## Validação 2
+        if value.islower():
+            raise ValueError('O título deve ser capitalizado.')
+
+        return value
+    
 class Aluno(BaseModel):
     id: Optional[int] = None
     nome: str
