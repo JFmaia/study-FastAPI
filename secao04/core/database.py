@@ -1,18 +1,23 @@
-"""
-Pasta onde se localiza a comunicação com o banco de dados, serialização e deserialização de dados! 
-"""
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, AsyncSession
-from core.config import settings
+from .config import settings
+from fastapi_utils.guid_type import setup_guids_postgresql
 
-## Usa para criar tabelas no banco
-engine: AsyncEngine = create_async_engine(settings.DB_URL)
+POSTGRES_URL = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOSTNAME}:{settings.DATABASE_PORT}/{settings.POSTGRES_DB}"
 
-## Abrir conexão com o db
-Session: AsyncSession = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    expire_on_commit=False,
-    class_= AsyncSession,
-    bind=engine
+engine = create_engine(
+    POSTGRES_URL, echo=True
 )
+setup_guids_postgresql(engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

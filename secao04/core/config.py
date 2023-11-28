@@ -1,17 +1,15 @@
-"""
-Pasta para configurações gerais usadas na aplicação
-"""
 from pydantic import BaseSettings
-from sqlalchemy.ext.declarative import declarative_base
 
 class Settings(BaseSettings):
-    
-
-    API_V1_STR: str = '/api/v1'
-    DB_URL: str = "postgresql+asyncpg://postgres:pgdata741@localhost:5432/faculdade"
-    DBBaseModel = declarative_base()
+    DATABASE_PORT: int
+    POSTGRES_PASSWORD: str
+    POSTGRES_USER: str
+    POSTGRES_DB: str
+    POSTGRES_HOST: str
+    POSTGRES_HOSTNAME: str
 
     class Config:
-        case_sensitive = True
+        env_file = './.env'
+
 
 settings = Settings()
