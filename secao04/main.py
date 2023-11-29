@@ -1,9 +1,5 @@
-from models import cursos_model
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from core.database import engine
-
-cursos_model.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
