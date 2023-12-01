@@ -7,13 +7,13 @@ from sqlalchemy.future import select
 
 from models.cursos_model import CursoModel
 from schemas.curso_schema import CursoSchema
-from core.database import get_db
+from core.deps import get_session
 
 
 router = APIRouter()
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=CursoSchema)
-async def post_curso(curso: CursoSchema, db: AsyncSession = Depends(get_db)):
+async def post_curso(curso: CursoSchema, db: AsyncSession = Depends(get_session)):
     novo_curso = CursoModel(titulo = curso.titulo, aulas=curso.aulas,horas= curso.horas)
 
     db.add(novo_curso)
@@ -23,7 +23,7 @@ async def post_curso(curso: CursoSchema, db: AsyncSession = Depends(get_db)):
 
 
 @router.get('/', response_model=List[CursoSchema])
-async def get_cursos(db: AsyncSession = Depends(get_db)):
+async def get_cursos(db: AsyncSession = Depends(get_session)):
   async with db as session:
      query = select(CursoModel)
      result = await session.execute(query)
@@ -33,7 +33,7 @@ async def get_cursos(db: AsyncSession = Depends(get_db)):
   
   
 @router.get('/{curso_id}', response_model=CursoSchema, status_code=status.HTTP_200_OK)
-async def get_curso(curso_id: int, db: AsyncSession = Depends(get_db)):
+async def get_curso(curso_id: int, db: AsyncSession = Depends(get_session)):
    async with db as session:
       query = select(CursoModel).filter(CursoModel.id == curso_id)
       result = await session.execute(query)
@@ -46,7 +46,7 @@ async def get_curso(curso_id: int, db: AsyncSession = Depends(get_db)):
       
 
 @router.put('/{curso_id}', response_model=CursoSchema, status_code=status.HTTP_202_ACCEPTED)
-async def put_curso(curso_id: int, curso: CursoSchema, db: AsyncSession = Depends(get_db)):
+async def put_curso(curso_id: int, curso: CursoSchema, db: AsyncSession = Depends(get_session)):
     async with db as session:
       query = select(CursoModel).filter(CursoModel.id == curso_id)
       result = await session.execute(query)
@@ -65,7 +65,7 @@ async def put_curso(curso_id: int, curso: CursoSchema, db: AsyncSession = Depend
       
 
 @router.delete('/{curso_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_curso(curso_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_curso(curso_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
       query = select(CursoModel).filter(CursoModel.id == curso_id)
       result = await session.execute(query)
