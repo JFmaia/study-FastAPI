@@ -1,9 +1,4 @@
 ## Dados de ajuda:
-
-> Senha do Postgress: pgdata741
-
-> Name do volume: pgdata
-
 - Comando para criar o container do Postgress: docker run -d  --name teste-postgres --network=postgres-network -e "POSTGRES_PASSWORD=Postgres2018!" -p 5432:5432 -v /home/renatogroffe/Desenvolvimento/PostgreSQL:/var/lib/postgresql/data -d postgres
 
 - Comando para criar o pgadmin do Postgress: docker run --name teste-pgadmin --network=postgres-network -p 15432:80 -e "PGADMIN_DEFAULT_EMAIL=renatogroff@yahoo.com.br" -e "PGADMIN_DEFAULT_PASSWORD=PgAdmin2018!" -d dpage/pgadmin4
