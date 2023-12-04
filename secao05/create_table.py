@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel
 from core.database import engine
-
+from models.curso_model import CursoModel
 
 async def create_tables() -> None:
     from models.curso_model import CursoModel
