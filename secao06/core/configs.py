@@ -8,7 +8,6 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_USER: str
     POSTGRES_DB: str
-    POSTGRES_HOST: str
     API_V1_STR: str
 
     DB_URL: str = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:{DATABASE_PORT}/{POSTGRES_DB}"
