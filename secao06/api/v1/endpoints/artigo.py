@@ -30,3 +30,14 @@ async def post_artigo(
     await db.commit()
 
     return novo_artigo
+
+#GET Artigos
+@router.get('/', response_model= List[ArtigoSchema], status_code=status.HTTP_200_OK)
+async def get_artigos(db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(ArtigoModel)
+        result = await session.execute(query)
+        artigos: List[ArtigoModel] = result.scalars().unique().all()
+
+    return artigos
+
