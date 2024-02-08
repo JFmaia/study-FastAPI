@@ -63,8 +63,8 @@ async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
         
 #PUT Usuario
-@router.get('/{usuario_id}', response_model=UsuarioSchemaBase, status_code=status.HTTP_202_ACCEPTED)
-async def get_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session)):
+@router.put('/{usuario_id}', response_model=UsuarioSchemaBase, status_code=status.HTTP_202_ACCEPTED)
+async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query= select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         result= await session.execute(query)
@@ -85,5 +85,21 @@ async def get_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSessio
             await session.commit()
 
             return usuario_up
+        else:
+            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
+        
+
+@router.delete('/{usuario_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query= select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
+        result= await session.execute(query)
+        usuario_del: UsuarioSchemaBase = result.scalars().unique().one_or_none()
+
+        if usuario_del:
+            await session.delete(usuario_del)
+            await session.commit()
+
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
