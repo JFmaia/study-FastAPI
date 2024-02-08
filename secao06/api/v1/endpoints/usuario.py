@@ -21,3 +21,21 @@ router = APIRouter()
 @router.get('/logado', response_model= UsuarioSchemaBase)
 def get_logado(usuario_logado: UsuarioModel = Depends(get_current_user)):
     return usuario_logado
+
+#POST / Signup
+@router.post('/signup', status_code=status.HTTP_201_CREATED, response_model=UsuarioSchemaBase)
+async def post_usuario(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(get_session)):
+    novo_usuario: UsuarioModel = UsuarioModel(
+        nome=usuario.nome, 
+        sobrenome=usuario.sobrenome,
+        email=usuario.email, 
+        senha=gerar_hash_senha(usuario.senha),
+        eh_admin=usuario.eh_admin
+    )
+
+    async with db as session:
+        session.add(novo_usuario)
+        await session.commit()
+
+        return novo_usuario
+
