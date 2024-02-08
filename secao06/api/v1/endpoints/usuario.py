@@ -61,3 +61,29 @@ async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
             return usuario
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
+        
+#PUT Usuario
+@router.get('/{usuario_id}', response_model=UsuarioSchemaBase, status_code=status.HTTP_202_ACCEPTED)
+async def get_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query= select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
+        result= await session.execute(query)
+        usuario_up: UsuarioSchemaBase = result.scalars().unique().one_or_none()
+
+        if usuario_up:
+            if usuario.nome:
+                usuario_up.nome = usuario.nome
+            if usuario.sobrenome:
+                usuario_up.sobrenome = usuario.sobrenome
+            if usuario.email:
+                usuario_up.email = usuario.email
+            if usuario.eh_admin:
+                usuario_up.eh_admin = usuario.eh_admin
+            if usuario.senha:
+                usuario_up.senha = gerar_hash_senha(usuario.senha)
+
+            await session.commit()
+
+            return usuario_up
+        else:
+            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
