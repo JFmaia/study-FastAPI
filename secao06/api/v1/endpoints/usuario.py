@@ -88,7 +88,7 @@ async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSessio
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
         
-
+#DELETE Usuario
 @router.delete('/{usuario_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
@@ -103,3 +103,14 @@ async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session
             return Response(status_code=status.HTTP_204_NO_CONTENT)
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
+        
+
+#POST Login
+@router.post('/login')
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_session)):
+    usuario = await autenticar(email=form_data.username, senha=form_data.password, db=db)
+
+    if not usuario:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Dados de acesso incorretos.')
+    
+    return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), "token_type":"bearer"}, status_code=status.HTTP_200_OK)
