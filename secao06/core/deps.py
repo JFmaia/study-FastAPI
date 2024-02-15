@@ -15,7 +15,7 @@ from models.usuario_model import UsuarioModel
 class TokenData(BaseModel):
     username: Optional[str] = None
 
-async def get_session() -> Generator:
+async def get_session() -> Generator: # type: ignore
     session: AsyncSession = Session()
 
     try:
@@ -25,7 +25,7 @@ async def get_session() -> Generator:
 
 
 ## Função qque descobre quem é o usuario pelo token
-async def get_current_user(db: Session = Depends(get_session), token: str = Depends(oauth2_schema)) ->UsuarioModel:
+async def get_current_user(db: Session = Depends(get_session), token: str = Depends(oauth2_schema)) ->UsuarioModel: # type: ignore
     credential_exception: HTTPException = HTTPException(
         status_code= status.HTTP_401_UNAUTHORIZED,
         detail='Não foi possícel autenticar a credencial',
