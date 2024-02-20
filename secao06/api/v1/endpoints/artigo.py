@@ -19,10 +19,13 @@ async def post_artigo(
     usuario_logado: UsuarioModel = Depends(get_current_user), 
     db: AsyncSession = Depends(get_session)
 ):
+    # Convertendo a URL de HttpUrl para str
+    url_fonte_str = str(artigo.url_fonte)
+
     novo_artigo: ArtigoModel = ArtigoModel(
         titulo=artigo.titulo, 
         descricao=artigo.descricao, 
-        url_fonte= artigo.url_fonte, 
+        url_fonte= url_fonte_str, 
         usuario_id=usuario_logado.id
     )
 
