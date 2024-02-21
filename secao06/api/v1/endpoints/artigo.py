@@ -45,12 +45,12 @@ async def get_artigos(db: AsyncSession = Depends(get_session)):
     return artigos
 
 #GET Artigo
-@router.get('/{artigo_id}', response_model=ArtigoSchema, status_code=status.HTTP_200_OK)
+@router.get('/{artigo_id}', response_model= ArtigoSchema, status_code=status.HTTP_200_OK)
 async def get_artigo(artigo_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(ArtigoModel).filter(ArtigoModel.id == artigo_id)
         result = await session.execute(query)
-        artigo = ArtigoModel = result.scalars().unique().one_or_none()
+        artigo: ArtigoModel = result.scalars().unique().one_or_none()
     
     if artigo:
         return artigo
