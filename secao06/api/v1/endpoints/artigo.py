@@ -64,6 +64,9 @@ async def put_artigo(artigo_id: int, artigo: ArtigoSchema, db: AsyncSession = De
         query = select(ArtigoModel).filter(ArtigoModel.id == artigo_id)
         result = await session.execute(query)
         artigo_up: ArtigoModel = result.scalars().unique().one_or_none()
+
+        # Convertendo a URL de HttpUrl para str
+        url_fonte_str = str(artigo.url_fonte)
     
         if artigo_up:
             if artigo.titulo:
@@ -71,7 +74,7 @@ async def put_artigo(artigo_id: int, artigo: ArtigoSchema, db: AsyncSession = De
             if artigo.descricao:
                 artigo_up.descricao = artigo.descricao
             if artigo.url_fonte:
-                artigo_up.url_fonte = artigo.url_fonte
+                artigo_up.url_fonte = url_fonte_str
             if usuario_logado.id != artigo_up.usuario_id:
                 artigo_up.usuario_id = usuario_logado.id
 
